@@ -1,0 +1,19 @@
+TITLE: GlobalTech Products and Services
+CLASSIFICATION: public
+ALLOWED_ROLES: all
+---
+GlobalTech Shield is a cloud workload protection platform covering AWS,
+Azure, and GCP workloads. It provides misconfiguration detection, runtime
+threat detection, and compliance reporting.
+
+GlobalTech Sentinel is a managed detection and response (MDR) service. A
+24x7 analyst team monitors customer environments and responds to incidents
+on the customer's behalf.
+
+GlobalTech Copilot is an internal framework GlobalTech uses to build
+employee-facing AI assistants, such as the internal assistant used in this
+training lab. Copilot standardizes how assistants authenticate users, log
+interactions, and select a language model provider.
+
+GlobalTech does not sell consumer products. All customers are enterprise or
+public-sector organizations under a signed services agreement.

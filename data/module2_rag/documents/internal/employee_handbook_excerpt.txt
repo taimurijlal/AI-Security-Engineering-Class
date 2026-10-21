@@ -1,0 +1,19 @@
+TITLE: Employee Handbook Excerpt
+CLASSIFICATION: internal
+ALLOWED_ROLES: employee, executive
+---
+Employees receive 25 days of annual leave per calendar year, in addition to
+statutory public holidays in their country of employment.
+
+Remote working is permitted up to three days per week with manager approval.
+Fully remote arrangements require additional approval from HR.
+
+All employees must complete annual security awareness training by December
+31. Training completion is tracked and reported to each employee's manager.
+
+Expense reports must be submitted within 30 days of purchase using the
+GlobalTech Expense portal. Reports submitted after 60 days require VP
+approval.
+
+This document is for internal GlobalTech employee use and should not be
+shared outside the company.

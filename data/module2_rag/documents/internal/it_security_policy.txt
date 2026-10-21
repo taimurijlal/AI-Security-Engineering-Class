@@ -1,0 +1,20 @@
+TITLE: IT Security Policy Summary
+CLASSIFICATION: internal
+ALLOWED_ROLES: employee, executive
+---
+All company laptops must use full-disk encryption and run the company
+managed endpoint security agent at all times.
+
+Multi-factor authentication is required for all internal systems, including
+email, the HR portal, and the corporate VPN.
+
+Employees must report suspected phishing emails to security@globaltech.example
+before interacting with any links or attachments in the message.
+
+Confidential and restricted documents must never be pasted into third-party
+AI tools or public chatbots. Only the approved internal GlobalTech AI
+assistant may be used for company business, and only with information the
+requesting employee is already authorized to access.
+
+Violations of this policy should be reported to the Information Security
+team.

@@ -1,0 +1,30 @@
+[
+  {
+    "employee_id": "E1001",
+    "base_salary": 118000,
+    "currency": "USD",
+    "bonus_target_pct": 10,
+    "last_review": "2025-04-01"
+  },
+  {
+    "employee_id": "E1002",
+    "base_salary": 95000,
+    "currency": "USD",
+    "bonus_target_pct": 15,
+    "last_review": "2025-04-01"
+  },
+  {
+    "employee_id": "E1003",
+    "base_salary": 132000,
+    "currency": "USD",
+    "bonus_target_pct": 12,
+    "last_review": "2025-04-01"
+  },
+  {
+    "employee_id": "E1004",
+    "base_salary": 108000,
+    "currency": "USD",
+    "bonus_target_pct": 8,
+    "last_review": "2025-04-01"
+  }
+]

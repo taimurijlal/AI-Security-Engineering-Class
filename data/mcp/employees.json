@@ -1,0 +1,42 @@
+[
+  {
+    "employee_id": "E1001",
+    "name": "Alice Chen",
+    "email": "alice@globaltech.example",
+    "role": "employee",
+    "department": "Engineering",
+    "title": "Software Engineer II",
+    "manager_id": "E1003",
+    "start_date": "2021-03-15"
+  },
+  {
+    "employee_id": "E1002",
+    "name": "Bob Nguyen",
+    "email": "bob@globaltech.example",
+    "role": "employee",
+    "department": "Sales",
+    "title": "Account Executive",
+    "manager_id": "E1003",
+    "start_date": "2022-07-01"
+  },
+  {
+    "employee_id": "E1003",
+    "name": "Helen Ortiz",
+    "email": "helen@globaltech.example",
+    "role": "hr",
+    "department": "Human Resources",
+    "title": "HR Business Partner",
+    "manager_id": null,
+    "start_date": "2018-01-10"
+  },
+  {
+    "employee_id": "E1004",
+    "name": "Sam Patel",
+    "email": "admin@globaltech.example",
+    "role": "admin",
+    "department": "IT",
+    "title": "Systems Administrator",
+    "manager_id": null,
+    "start_date": "2019-05-20"
+  }
+]

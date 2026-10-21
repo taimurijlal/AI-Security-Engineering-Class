@@ -1,0 +1,18 @@
+TITLE: GlobalTech Company Overview
+CLASSIFICATION: public
+ALLOWED_ROLES: all
+---
+GlobalTech is a cloud security and applied AI company founded in 2014 and
+headquartered in Austin, Texas. GlobalTech serves enterprise customers across
+financial services, healthcare, and the public sector.
+
+GlobalTech employs approximately 3,200 people worldwide across engineering,
+sales, customer success, and corporate functions.
+
+Our mission is to help organizations adopt cloud and AI technology safely,
+without sacrificing the pace of innovation. GlobalTech is regularly recognized
+in industry analyst reports covering cloud security posture management and
+managed detection and response.
+
+All company names, figures, and events described in this document are
+fictional and created for a security training exercise.
