@@ -1,0 +1,7 @@
+python-dotenv>=1.0,<2
+requests>=2.32,<3
+openai>=1.40,<3
+pytest>=8,<10
+streamlit>=1.38,<2
+mcp<2
+langgraph>=0.6,<0.7
