@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environment and secrets
+.venv/
+.env
+
+# Runtime logs and exports (recreated by the app)
+attack_log.jsonl
+security_findings.jsonl
+globaltech_*_assessment.md
+
+# Generated / runtime state (recreated on demand)
+data/module2_rag/index/rag_index.pkl
+data/module4_agent/approvals.json
+data/module4_agent/memory.json
+
+# OS / editor
+.DS_Store
+~$*
