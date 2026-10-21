@@ -708,17 +708,23 @@ def _render_run_summary(spec: ModuleSpec, user: User, run_id: str, state: dict, 
     if state.get("final_result"):
         st.info(state["final_result"])
 
+    def _action_label(item: dict) -> str:
+        # target_employee_id is None when the target couldn't be resolved
+        # (e.g. Demo 5b's nonexistent ticket); omit it rather than print "None".
+        target = item.get("target_employee_id")
+        return f"`{item.get('tool_name')}`" + (f" on `{target}`" if target else "")
+
     denied = state.get("denied_actions") or []
     if denied:
         st.markdown("**Denied / escalated:**")
         for item in denied:
-            st.write(f"- `{item.get('tool_name')}` on `{item.get('target_employee_id')}`: {item.get('reason')}")
+            st.write(f"- {_action_label(item)}: {item.get('reason')}")
 
     completed = state.get("completed_actions") or []
     if completed:
         st.markdown("**Completed:**")
         for item in completed:
-            st.write(f"- `{item.get('tool_name')}` on `{item.get('target_employee_id')}`: {item.get('summary')}")
+            st.write(f"- {_action_label(item)}: {item.get('summary')}")
 
     with st.expander("Step-by-step trace"):
         for ev in state.get("execution_trace", []):

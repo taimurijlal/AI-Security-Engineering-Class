@@ -201,8 +201,11 @@ def build_markdown_report(
     reflection_questions: list[str],
 ) -> str:
     summary = summarize(findings)
+    # Module titles like "GlobalTech AI — Prompt Security" already end in
+    # "Security"; don't repeat it.
+    heading = f"{module_title} Assessment" if module_title.endswith("Security") else f"{module_title} Security Assessment"
     lines = [
-        f"# {module_title} Security Assessment",
+        f"# {heading}",
         "",
         f"**Tester:** {tester_email} ({tester_role.upper()})",
         f"**Model / Provider:** {provider_name} — {model_name}",

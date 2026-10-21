@@ -343,6 +343,15 @@ def _approve_pending_action(spec: ModuleSpec) -> None:
             "raw tool result.)"
         )
 
+    if _parse_tool_call(final_answer) is not None:
+        # The model asked for another tool instead of summarizing. Don't show
+        # the raw JSON, and don't chain a second call after an approval.
+        final_answer = (
+            "(The action was executed. GlobalTech AI asked for another tool "
+            "call instead of summarizing the result; see the MCP Inspector "
+            "below for the raw tool result.)"
+        )
+
     _append_assistant(spec, final_answer, all_records)
     record_interaction(user, spec.module_id, pending["origin_prompt"], final_answer)
     st.session_state[_key(spec, "pending_action")] = None
