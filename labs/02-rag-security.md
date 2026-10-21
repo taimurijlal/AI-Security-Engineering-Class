@@ -307,7 +307,7 @@ pytest -q tests/module2/
 
 All tests should pass.
 
-If you get stuck, `instructor/SOLUTION.md` has a complete reference fix --
+If you get stuck, `instructor/module2-SOLUTION.md` has a complete reference fix --
 but try for real first. Comparing your own attempt against the reference
 afterward is worth more than starting from the reference.
 

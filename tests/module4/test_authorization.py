@@ -44,8 +44,16 @@ def test_alice_cannot_retrieve_bobs_salary():
 
 def test_alice_cannot_retrieve_restricted_project_atlas_information():
     """project_atlas.txt is ALLOWED_ROLES: executive -- 'employee' must be
-    filtered out by the agent's own independent RAG re-check."""
-    candidates = rag_module.retrieve_documents("Project Atlas acquisition plan NovaTech", ALICE_ROLE)
+    filtered out by the agent's own independent RAG re-check.
+
+    The candidate pool is every chunk in the index, built directly rather
+    than through retrieve_documents(): once a student fixes Module 2,
+    retrieve_documents() stops returning the restricted chunk at all, and
+    this test must keep exercising Module 4's own boundary either way."""
+    candidates = [
+        rag_module.RetrievedChunk(chunk=chunk, similarity=0.0, authorized=True)
+        for chunk in rag_module.get_index().chunks
+    ]
     assert any(item.chunk.title.startswith("Project Atlas") for item in candidates), (
         "Test setup assumption failed: the restricted document was not even a retrieval candidate."
     )

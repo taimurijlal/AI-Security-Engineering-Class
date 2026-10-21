@@ -270,8 +270,9 @@ streamlit run app/ui.py
 Your browser opens GlobalTech AI at `http://localhost:8501`. The sidebar
 should show the model as **Connected**. Pick a module from the **MODULE**
 switcher at the top of the sidebar. To stop the app, press Ctrl+C in the
-terminal. If you prefer the command line, `python -m app.main` runs the same
-assistant as a terminal chat.
+terminal. If you prefer the command line, `python -m app.main` runs Modules 1
+and 2 as a terminal chat. Modules 3 and 4 need the browser UI, because their
+tool calls, approval prompts and agent runs only work there.
 
 ---
 

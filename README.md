@@ -161,7 +161,7 @@ This opens GlobalTech AI at `http://localhost:8501`. Use the **MODULE** switcher
 python -m app.main
 ```
 
-This asks you to choose a module and an identity, then starts a terminal chat using the same backend.
+This asks you to choose a module and an identity, then starts a terminal chat using the same backend. The CLI fully supports **Modules 1 and 2** only. Modules 3 and 4 need the browser UI, because their tool calls, approval prompts and agent runs only work there; in the CLI they just print a note pointing you to `streamlit run app/ui.py`.
 
 ## Running the security tests
 
