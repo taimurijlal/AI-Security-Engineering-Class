@@ -1,49 +1,79 @@
 # GlobalTech AI Security Engineering
 
-A deliberately vulnerable AI application for learning AI security engineering, built as a growing set of self-contained **modules** inside one app. Switch between modules from the sidebar — no need to run separate projects.
+A **deliberately vulnerable** AI application for learning AI security engineering hands-on. It plays the part of *GlobalTech AI*, an internal employee assistant at a fictional company, and is built as four self-contained lab **modules** inside one Streamlit app. You switch between modules from the sidebar; there are no separate projects to run.
+
+Each module teaches one way AI applications get security wrong: you attack it in the browser, record what you find, read the code responsible, and (in Modules 1–3) fix it so the security tests pass.
 
 All company names, projects, people and data are fictional.
 
+> **Do not deploy this application.** The starter code is insecure on purpose. That is the lab.
+
 ## Modules
 
-| Module | Teaches | Lab |
+| Module | What it teaches | Student guide |
 |---|---|---|
-| 1. Prompt Security | Why handing an LLM restricted context and relying on the system prompt to keep it secret does not work | [labs/01-prompt-security.md](labs/01-prompt-security.md) |
-| 2. RAG Security | Why semantic relevance in a retrieval pipeline is not the same thing as authorization | [labs/02-rag-security.md](labs/02-rag-security.md) |
-| 3. MCP Security | Why a correctly-computed authorization decision does nothing unless the code that calls a tool actually checks it before acting | [labs/03-mcp-security.md](labs/03-mcp-security.md) |
-| 4. Agent Security | Why an autonomous agent must only *propose* actions: the application re-authorizes every step, gates writes behind human approval, and treats tool output and memory as untrusted | Instructor-led demo (see `instructor/module4-demo-guide.md`) |
+| **1. Prompt Security** | Handing an LLM restricted context and relying on the system prompt to keep it secret does not work. | [labs/01-prompt-security.md](labs/01-prompt-security.md) |
+| **2. RAG Security** | In a retrieval pipeline, semantic relevance is not the same thing as authorization, and retrieved documents can carry prompt injections. | [labs/02-rag-security.md](labs/02-rag-security.md) |
+| **3. MCP Security** | A correctly computed authorization decision does nothing unless the code that calls a tool checks it before acting. | [labs/03-mcp-security.md](labs/03-mcp-security.md) |
+| **4. Agent Security** | An autonomous agent must only *propose* actions. The application re-authorizes every step, gates writes behind human approval, treats tool output and memory as untrusted, caps execution, and must log what happened. | Module 4 section of the [course notes](notes/GlobalTech-AI-Security-Module-Notes.md) |
 
-Each module has its own instructor solution in `instructor/` (don't open until you've attempted the lab yourself).
+Module 4 runs six scripted demonstrations: a legitimate workflow, **excessive agency**, **action hijacking** (indirect prompt injection), **memory poisoning**, **goal manipulation** (scope expansion) and **runaway execution**. It closes with an exercise on **logging agentic actions**. Unlike Modules 1–3 it has no single planted bug to fix. Instead, a **Secured / Vulnerable** agent-mode switch lets you compare both behaviours side by side.
 
-## Architecture
+## What using the app looks like
 
-Every module is a thin, isolated package under `app/modules/<module>/` that implements the `ModuleSpec` contract (`app/core/module_spec.py`). Shared mechanics — the Streamlit UI shell, the CLI shell, auth, the LLM provider abstraction, audit logging, and Security Testing Mode findings — live once in `app/core/` and are driven by each module's spec. Adding a module means writing one `module.py` and registering it in `app/registry.py`; nothing in `app/core/` changes.
+1. Pick a **module** and a **demo identity** in the sidebar. Modules 1–2 use an employee (Alice) and an executive (Sarah). Modules 3–4 use two employees (Alice and Bob), an HR user (Helen) and an Admin.
+2. Chat with the assistant as that identity and try to make it reveal or do things that identity shouldn't be allowed to.
+3. Turn on **Security Testing Mode** to record findings. A **Security Assessment** tab appears, and **Export Assessment** writes a markdown report of your findings.
+4. Use the inspectors to see what actually happened behind the chat: the **RAG Inspector** panel in Module 2 shows retrieved chunks and their authorization, and the **Agent Inspector** and **Agent Memory Inspector** tabs in Module 4 show the step-by-step trace and memory.
+5. Read the code behind the behaviour and run the deterministic tests.
 
-Module 3 additionally runs a genuine [MCP](https://modelcontextprotocol.io/) server: `app/modules/module3_mcp/mcp_server.py` is launched by `mcp_client.py` as a real subprocess over the standard stdio transport, discovered via `list_tools()` and invoked via `call_tool()` exactly as any MCP host would, not a Python function dressed up and called an "MCP tool." The application — never the model — owns session identity: `mcp_client.call_tool()` always overwrites any `requester_id`/`requester_role` the model proposes with the authenticated `app.core.security.User` from the current session before the call goes over the wire.
+Module 4 also has **Controlled Security Scenario Mode**, which plays a fixed script through the real security controls with no model call. Every demo there gives the same result each time, and it works even without an LLM configured.
 
-Module 4 builds a real [LangGraph](https://langchain-ai.github.io/langgraph/) `StateGraph` agent (`app/modules/module4_agent/graph.py`) on top of Modules 2 and 3: validate goal → plan → propose → authorize → assess risk → human approval (LangGraph `interrupt()`) → execute through Module 3's MCP client → observe. Only the plan/propose steps read model output; `security_boundary.py` re-applies `rag.is_authorized()` and `tool_policy.authorize()` itself, so the agent stays secure whether or not you have fixed Modules 2 and 3. The sidebar offers **Controlled Security Scenario Mode** (scripted, deterministic planner, no LLM call — good for repeatable demos) and **Live Agent Mode** (real model), plus a **Secured** / **Vulnerable** agent-mode switch that toggles the approval gate for the Excessive Agency demo. Approvals and agent memory persist in `data/module4_agent/approvals.json` and `memory.json`.
+## Repository layout
 
-Logging is unified: `attack_log.jsonl` and `security_findings.jsonl` live at the project root and every entry is tagged with a `module` field, so a Security Assessment export can cover one module or (via the shared findings store) the whole portfolio.
-
-## Setup
-
-### 1. Install Python
-
-Python 3.11+ is recommended.
-
-### 2. Install Ollama (recommended, free, local)
-
-Install Ollama from its official website, then start it, and pull the default model:
-
-```bash
-ollama pull qwen3:4b
+```text
+app/
+  ui.py, main.py         Streamlit and CLI entry points
+  registry.py            the list of modules
+  core/                  shared shell: UI, CLI, LLM providers, identities, audit log, findings
+  modules/
+    module1_prompt_security/
+    module2_rag/         TF-IDF retrieval over data/module2_rag/documents/
+    module3_mcp/         a real MCP server and client (stdio subprocess)
+    module4_agent/       a LangGraph agent with approval, memory and budget controls
+data/                    seed data: RAG documents, MCP employees/salaries/tickets
+labs/                    student lab handouts (Modules 1–3)
+notes/                   full course notes for all four modules (Markdown and Word)
+instructor/              solutions and the Module 4 demo guide (attempt the labs first)
+tests/                   deterministic security tests, one folder per module
 ```
 
-If your workstation cannot comfortably run that model, choose another Ollama chat model and set `OLLAMA_MODEL` in `.env`.
+## Requirements
 
-### 3. Set up the project
+- **Python 3.11 or newer**: it has been run on 3.15.
+- **An LLM for chat**, either of:
+  - **Ollama** (free, runs locally): default model `qwen3:4b`, about a 2.5 GB download.
+  - **An OpenAI-compatible API**: an API key and a model name.
+- **Git**, to clone the repository.
 
-macOS/Linux:
+Module 2's retrieval uses a local TF-IDF index, so no embedding model is needed. You can run the tests and Module 4's scripted demos with no LLM at all.
+
+## Installation
+
+### 1. Get the code
+
+```bash
+git clone https://github.com/taimurijlal/AI-Security-Engineering-Class.git
+cd AI-Security-Engineering-Class
+```
+
+### 2. Install Python
+
+If `python3 --version` shows something older than 3.11, install a current version from [python.org](https://www.python.org/downloads/), or with your package manager (for example `brew install python@3.12` on macOS).
+
+### 3. Create a virtual environment and install dependencies
+
+macOS / Linux:
 
 ```bash
 python3 -m venv .venv
@@ -51,6 +81,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 ```
+
+If `python3` is still the old system version, use the full versioned name instead, for example `python3.12 -m venv .venv`.
 
 Windows PowerShell:
 
@@ -61,43 +93,32 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-If PowerShell refuses to run `Activate.ps1` because scripts are disabled, run this once and try again: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`. Alternatively, use Command Prompt and run `.venv\Scripts\activate.bat`.
+If PowerShell refuses to run `Activate.ps1` because scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once and try again, or use Command Prompt and run `.venv\Scripts\activate.bat`.
 
-### 4. Verify connectivity
+Activate the environment again (`source .venv/bin/activate`) in every new terminal before running the commands below.
 
-```bash
-python -m app.core.check_setup
-```
+### 4. Configure the model
 
-### 5. Build the Module 2 retrieval index
+Edit `.env`. The template, [.env.example](.env.example), has every setting:
 
-```bash
-python -m app.modules.module2_rag.ingestion
-```
+| Variable | Default | Purpose |
+|---|---|---|
+| `LLM_PROVIDER` | `ollama` | `ollama` or `openai` |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | where Ollama is listening |
+| `OLLAMA_MODEL` | `qwen3:4b` | any Ollama chat model |
+| `OPENAI_API_KEY` | — | required when `LLM_PROVIDER=openai` |
+| `OPENAI_MODEL` | — | e.g. `gpt-4o-mini` |
+| `OPENAI_BASE_URL` | blank | leave blank for OpenAI itself; set it only for another OpenAI-compatible provider |
 
-(The app builds this automatically on first use if you forget, but it's good practice to run it explicitly after editing the document corpus under `data/module2_rag/documents/`.)
-
-### 6. Launch the browser UI
-
-```bash
-streamlit run app/ui.py
-```
-
-This opens GlobalTech AI in your browser (default `http://localhost:8501`). Use the **MODULE** switcher at the top of the sidebar to pick a lab; each module keeps its own conversation, identity, and Security Testing Mode state.
-
-If the sidebar shows **○ Model unavailable**, check that Ollama is running and the model above has been pulled. The app shows a plain-language error (no stack trace) with a suggested command.
-
-## Alternative: the CLI
+**Option A — Ollama (default).** Install Ollama from [ollama.com](https://ollama.com), start it, then pull the model:
 
 ```bash
-python -m app.main
+ollama pull qwen3:4b
 ```
 
-Prompts you to choose a module, then a demo identity, then starts a terminal chat loop using the identical backend.
+If your machine can't comfortably run that model, pull a smaller chat model and set `OLLAMA_MODEL` to its name.
 
-## Optional OpenAI-compatible provider
-
-Update `.env`:
+**Option B — OpenAI-compatible API.** Set the following in `.env`:
 
 ```text
 LLM_PROVIDER=openai
@@ -106,32 +127,90 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_BASE_URL=
 ```
 
-Leave `OPENAI_BASE_URL` blank to use the real OpenAI API. Only set it if pointing at a different OpenAI-compatible provider. Do not commit `.env` or API keys to source control.
+`.env` is git-ignored. Never commit it or paste API keys into source files.
 
-## Run the security tests
+### 5. Verify the setup
+
+```bash
+python -m app.core.check_setup
+```
+
+For Ollama this checks that the server is reachable and the model is pulled. For OpenAI it checks that the required settings are present; the first chat message confirms the key actually works.
+
+### 6. (Optional) Build the Module 2 index
+
+```bash
+python -m app.modules.module2_rag.ingestion
+```
+
+The app builds the index automatically on first use. Rerun this command whenever you edit the documents under `data/module2_rag/documents/`.
+
+## Running the app
+
+### Browser UI
+
+```bash
+streamlit run app/ui.py
+```
+
+This opens GlobalTech AI at `http://localhost:8501`. Use the **MODULE** switcher at the top of the sidebar to pick a lab. Each module keeps its own conversation, identity and Security Testing Mode state.
+
+### Command line
+
+```bash
+python -m app.main
+```
+
+This asks you to choose a module and an identity, then starts a terminal chat using the same backend.
+
+## Running the security tests
 
 ```bash
 pytest -q
 ```
 
-The starter implementations of Modules 1–3 are deliberately vulnerable, so some authorization tests are expected to fail (1 in Module 1, 2 in Module 2, 4 in Module 3) until you remediate them during the labs. Module 4 ships with both its vulnerable and secured paths selectable at runtime, so all of its tests should pass from the start. Run a single module's tests with `pytest -q tests/module1/` (or `module2/`, `module3/`, `module4/`).
+The tests are deterministic and need no LLM. They check the application's security controls, not model responses. On the starter code, **7 tests fail on purpose**: 1 in Module 1, 2 in Module 2 and 4 in Module 3. These are the vulnerabilities you fix in the labs. All 32 Module 4 tests should pass from the start.
 
-Module 4's end-to-end tests run the real MCP subprocess and write to `data/mcp/tickets.json`; the `module4_isolated_state` fixture backs up and restores it, along with the approval and memory stores.
+Run one module's tests with `pytest -q tests/module1/` (or `module2/`, `module3/`, `module4/`).
 
-## Local files this app creates
+## Files the app writes
 
-These are ignored by git (see `.gitignore`):
+These are created at runtime and ignored by git:
 
-- `attack_log.jsonl` — every normal interaction across all modules, tagged by `module`
-- `security_findings.jsonl` — findings recorded in Security Testing Mode, tagged by `module`
-- `globaltech_prompt_security_assessment.md`, `globaltech_rag_security_assessment.md`, `globaltech_mcp_security_assessment.md`, `globaltech_agentic_ai_security_assessment.md` — generated by **Export Assessment**
-- `data/module2_rag/index/rag_index.pkl` — Module 2's retrieval index (rebuilt automatically if missing)
-- `data/module4_agent/approvals.json`, `data/module4_agent/memory.json` — Module 4's approval and agent-memory stores (start empty if missing)
+- `attack_log.jsonl`: every chat interaction across all modules, tagged by `module`.
+- `security_findings.jsonl`: findings recorded in Security Testing Mode, tagged by `module`.
+- `globaltech_*_assessment.md`: reports generated by **Export Assessment**.
+- `data/module2_rag/index/rag_index.pkl`: Module 2's retrieval index (rebuilt if missing).
+- `data/module4_agent/approvals.json` and `memory.json`: Module 4's approval records and agent memory (start empty if missing).
 
-This one is committed seed data that the app also writes to:
+One committed file is also written to: `data/mcp/tickets.json`, the support-ticket store. Module 3's `create_support_ticket` adds tickets to it, and **Approve** or Vulnerable-mode runs in Module 4 change ticket statuses. Reset it with:
 
-- `data/mcp/tickets.json` — Module 3's support-ticket store; `create_support_ticket` writes to it directly, so it can accumulate test tickets if you file them during the lab. Approve or Vulnerable-mode runs in Module 4 also write to it. Run `git checkout data/mcp/tickets.json` to reset it
+```bash
+git checkout data/mcp/tickets.json
+```
 
-## Important
+## Troubleshooting
 
-Prompt attacks are probabilistic. A payload that works against one model or one run may fail on another. The deterministic security tests validate the application controls surrounding the model, not a particular model response.
+- **The sidebar shows "○ Model unavailable".** Check that Ollama is running and the model has been pulled, or that the OpenAI settings in `.env` are correct, then rerun `python -m app.core.check_setup`. The app shows a plain-language error with a suggested fix. Module 4's Controlled Security Scenario Mode still works without a model.
+- **More tests fail than the 7 expected.** You've probably changed the ticket data during manual testing. Reset `data/mcp/tickets.json` (see above) and rerun.
+- **A Module 4 demo gives a different result than the notes.** Clicking **Load Scenario** resets the agent mode to that demo's default. Choose the mode you want *after* loading the scenario. Also reset the ticket data between repeated write demos.
+- **`pip install` fails.** Check that the virtual environment uses Python 3.11 or newer (`python --version` with the environment active).
+
+## For instructors
+
+- [instructor/](instructor/) has a solution for each module and [module4-demo-guide.md](instructor/module4-demo-guide.md), a recording script with the expected result of every Module 4 demo.
+- [notes/](notes/) has the full course notes in Markdown and Word. They are the main self-guided material for Module 4, which has no lab handout yet.
+
+## Architecture
+
+Every module is a thin, isolated package under `app/modules/<module>/` that implements the `ModuleSpec` contract (`app/core/module_spec.py`). Shared mechanics live once in `app/core/` and are driven by each module's spec: the Streamlit and CLI shells, identities, the LLM provider abstraction, audit logging and Security Testing Mode findings. Adding a module means writing one `module.py` and registering it in `app/registry.py`; nothing in `app/core/` changes.
+
+Module 3 runs a genuine [MCP](https://modelcontextprotocol.io/) server. `mcp_client.py` launches `app/modules/module3_mcp/mcp_server.py` as a real subprocess over the standard stdio transport, then discovers tools with `list_tools()` and invokes them with `call_tool()`, exactly as any MCP host would. The application, never the model, owns session identity: `mcp_client.call_tool()` always replaces any `requester_id`/`requester_role` the model proposes with the signed-in user from the current session before the call goes over the wire.
+
+Module 4 is a real [LangGraph](https://langchain-ai.github.io/langgraph/) `StateGraph` agent (`app/modules/module4_agent/graph.py`) built on Modules 2 and 3. Each step goes: validate goal → plan → propose → authorize → assess risk → human approval (LangGraph `interrupt()`) → execute through Module 3's MCP client → observe. Only the plan and propose steps read model output. `security_boundary.py` re-applies `rag.is_authorized()` and `tool_policy.authorize()` itself, so the agent stays secure whether or not you have fixed Modules 2 and 3.
+
+Logging is shared across modules: `attack_log.jsonl` and `security_findings.jsonl` live at the project root and every entry is tagged with a `module` field, so an assessment export can cover one module or all of them.
+
+## A note on results
+
+Prompt attacks are probabilistic: a payload that works against one model or one run may fail on another. That's why the tests check the application's controls rather than what a particular model says, and why Module 4's scripted mode exists for repeatable demonstrations.
