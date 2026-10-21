@@ -15,7 +15,8 @@ For the formal, challenge-by-challenge versions with grading criteria, see
 `instructor/module1-SOLUTION.md`, `instructor/module2-SOLUTION.md`, and
 `instructor/module3-SOLUTION.md` — try the labs yourself before looking.
 Module 4 does not yet have a formal `labs/04-agent-security.md` challenge
-document — for now, this notes section and `instructor/module4-SOLUTION.md`
+document — for now, this notes section (also available on its own as
+`notes/04-agent-security-notes.md`) and `instructor/module4-SOLUTION.md`
 / `instructor/module4-demo-guide.md` are the reference materials, and
 Module 4's section below is written to stand on its own.
 

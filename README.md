@@ -15,7 +15,7 @@ All company names, projects, people and data are fictional.
 | **1. Prompt Security** | Handing an LLM restricted context and relying on the system prompt to keep it secret does not work. | [labs/01-prompt-security.md](labs/01-prompt-security.md) |
 | **2. RAG Security** | In a retrieval pipeline, semantic relevance is not the same thing as authorization, and retrieved documents can carry prompt injections. | [labs/02-rag-security.md](labs/02-rag-security.md) |
 | **3. MCP Security** | A correctly computed authorization decision does nothing unless the code that calls a tool checks it before acting. | [labs/03-mcp-security.md](labs/03-mcp-security.md) |
-| **4. Agent Security** | An autonomous agent must only *propose* actions. The application re-authorizes every step, gates writes behind human approval, treats tool output and memory as untrusted, caps execution, and must log what happened. | Module 4 section of the [course notes](notes/GlobalTech-AI-Security-Module-Notes.md) |
+| **4. Agent Security** | An autonomous agent must only *propose* actions. The application re-authorizes every step, gates writes behind human approval, treats tool output and memory as untrusted, caps execution, and must log what happened. | [notes/04-agent-security-notes.md](notes/04-agent-security-notes.md) |
 
 Module 4 runs six scripted demonstrations: a legitimate workflow, **excessive agency**, **action hijacking** (indirect prompt injection), **memory poisoning**, **goal manipulation** (scope expansion) and **runaway execution**. It closes with an exercise on **logging agentic actions**. Unlike Modules 1–3 it has no single planted bug to fix. Instead, a **Secured / Vulnerable** agent-mode switch lets you compare both behaviours side by side.
 
@@ -43,7 +43,7 @@ app/
     module4_agent/       a LangGraph agent with approval, memory and budget controls
 data/                    seed data: RAG documents, MCP employees/salaries/tickets
 labs/                    student lab handouts (Modules 1–3)
-notes/                   full course notes for all four modules (Markdown and Word)
+notes/                   course notes: one Markdown file per module, plus all modules combined (Markdown and Word)
 instructor/              solutions and the Module 4 demo guide (attempt the labs first)
 tests/                   deterministic security tests, one folder per module
 ```
@@ -199,7 +199,7 @@ git checkout data/mcp/tickets.json
 ## For instructors
 
 - [instructor/](instructor/) has a solution for each module and [module4-demo-guide.md](instructor/module4-demo-guide.md), a recording script with the expected result of every Module 4 demo.
-- [notes/](notes/) has the full course notes in Markdown and Word. They are the main self-guided material for Module 4, which has no lab handout yet.
+- [notes/](notes/) has the course notes: one Markdown file per module (`01-` to `04-…-notes.md`) and all modules combined in Markdown and Word. [04-agent-security-notes.md](notes/04-agent-security-notes.md) is the main self-guided material for Module 4, which has no lab handout yet.
 
 ## Architecture
 
