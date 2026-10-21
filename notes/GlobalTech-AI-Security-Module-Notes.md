@@ -1,7 +1,8 @@
 # GlobalTech AI — Security Engineering Module Notes
 
-**Modules covered:** Module 1 (Prompt Security), Module 2 (RAG Security),
-Module 3 (MCP Security), and Module 4 (Agent Security)
+**Modules covered:** Module 0 (Introduction and Setup), Module 1 (Prompt
+Security), Module 2 (RAG Security), Module 3 (MCP Security), and Module 4
+(Agent Security)
 
 These notes are the "learn it, then try it yourself" companion to the
 GlobalTech AI Security Engineering labs. Keep the app open
@@ -27,6 +28,297 @@ actions, not just answer questions. Module 4 assumes you know all three of
 those lessons already, and applies them to an assistant that doesn't just
 call one tool per turn, but plans and runs a multi-step, pausable,
 resumable sequence of its own tool calls toward a goal.
+
+\newpage
+
+# Module 0 — Introduction and Setup
+
+Before you attack anything, you need the lab running on your own machine.
+This module explains what the companion repository is, how it fits the
+course, which tools you need, and walks you through installing and starting
+it. Do it once, before Module 1; every later module assumes the app starts
+and the tests run.
+
+---
+
+## 1. What this repository is
+
+The course teaches AI security concepts; this repository lets you see them
+happen. It contains **GlobalTech AI**, an internal employee assistant for a
+fictional company, built as a small Python web app. Every lesson in the
+course has a matching module in the app, so instead of only reading about a
+prompt injection or a broken authorization check, you trigger it yourself,
+look at the code that allowed it, and (in Modules 1–3) fix it.
+
+Two things make it different from normal software:
+
+- **It is deliberately vulnerable.** The weaknesses are planted on purpose;
+  they are the lab. Never deploy this application or reuse its code as a
+  template for a real system.
+- **Everything in it is fictional.** The company, the employees, the
+  salaries, the projects and the documents are made up, so you can attack it
+  freely.
+
+A typical lab session follows the same loop in every module: learn the
+concept from the course, try the attack in the app, record what you found,
+read the code responsible, then run the automated tests to confirm the
+vulnerability (and, after your fix, that it is gone).
+
+---
+
+## 2. What is inside
+
+The app has four lab modules, one per course section, which you switch
+between from the sidebar:
+
+- **Module 1 — Prompt Security:** why a system prompt can't keep restricted
+  information secret.
+- **Module 2 — RAG Security:** why retrieving a relevant document is not the
+  same as being allowed to see it.
+- **Module 3 — MCP Security:** why an assistant that calls tools must
+  enforce authorization, not just compute it.
+- **Module 4 — Agent Security:** how an autonomous agent is kept in check
+  with authorization, human approval, trusted memory, budgets and logging.
+
+In each module you pick a **demo identity** (an employee, an executive, HR
+or an admin) and chat with the assistant as that person. Turning on
+**Security Testing Mode** lets you record findings and export a security
+assessment report.
+
+The repository folders you will use most:
+
+- `app/` — the application code. Each module lives in its own folder under
+  `app/modules/`.
+- `data/` — the fictional company data: documents, employee records and
+  support tickets.
+- `labs/` — formal lab handouts for Modules 1–3.
+- `notes/` — these notes.
+- `tests/` — automated security tests, one folder per module.
+- `instructor/` — solutions. Attempt each lab yourself before opening them.
+
+---
+
+## 3. The tools you need
+
+Everything below is free except the optional OpenAI API key.
+
+- **Python 3.11 or newer** — the programming language the app is written in.
+  You don't need to be a Python expert, but you will read Python code in
+  every module.
+- **Git** — downloads the repository and lets you reset the lab data when a
+  demo changes it.
+- **Visual Studio Code (VS Code)** — the recommended code editor, with
+  Microsoft's **Python** extension. Any editor works, but these notes assume
+  VS Code.
+- **A terminal** — Terminal on macOS, PowerShell on Windows, or the terminal
+  built into VS Code. Every command in these notes is typed there.
+- **A web browser** — the app opens as a local web page at
+  `http://localhost:8501`.
+- **A large language model (LLM)** — the brain behind the assistant's chat
+  replies. Choose one of the two options below.
+
+**Option A — Ollama (free, runs on your computer).** Ollama runs an open
+model locally, so nothing leaves your machine and there is no cost. The
+default model, `qwen3:4b`, is about a 2.5 GB download; 8 GB of RAM or more
+is comfortable. Replies are slower on older laptops.
+
+**Option B — an OpenAI API key (paid, runs in the cloud).** Faster replies
+and no download, but you need an OpenAI account with billing set up, and
+usage is charged per request. The default model is `gpt-4o-mini`. Any
+OpenAI-compatible provider also works. Set a monthly spending limit in your
+OpenAI account before you start.
+
+If you can't set up either right away, you can still install the app, run
+all the tests, and use Module 4's scripted demonstrations — none of those
+need a model.
+
+---
+
+## 4. Step 1 — Install Python
+
+Download the latest Python 3 installer from `python.org/downloads` and run
+it.
+
+- **Windows:** on the first installer screen, tick **Add python.exe to
+  PATH** before clicking Install.
+- **macOS:** run the .pkg installer. macOS already includes an older Python
+  3.9 as `/usr/bin/python3`, which is too old for this app — the installer
+  adds a newer one alongside it.
+
+Check it worked in a new terminal window:
+
+```bash
+python3 --version     # macOS / Linux
+python --version      # Windows
+```
+
+You should see 3.11 or higher. On macOS, if `python3` still reports 3.9, use
+the versioned command the installer added, such as `python3.12`.
+
+---
+
+## 5. Step 2 — Install Git and VS Code
+
+- **Git:** on macOS run `xcode-select --install` (or install from
+  `git-scm.com`); on Windows install from `git-scm.com` with the default
+  options. Check with `git --version`.
+- **VS Code:** install from `code.visualstudio.com`. Open it, go to the
+  Extensions view, and install **Python** (published by Microsoft).
+
+---
+
+## 6. Step 3 — Get the code
+
+In your terminal, go to the folder where you keep projects, then clone the
+repository and move into it:
+
+```bash
+git clone https://github.com/taimurijlal/AI-Security-Engineering-Class.git
+cd AI-Security-Engineering-Class
+```
+
+Open the folder in VS Code (**File → Open Folder…**), then open its built-in
+terminal with **Terminal → New Terminal**. The remaining steps can all be
+run from there.
+
+---
+
+## 7. Step 4 — Create a virtual environment and install the dependencies
+
+A **virtual environment** is a private folder of Python packages just for
+this project, so it can't clash with anything else on your computer. Create
+it, activate it, install the packages, and copy the settings template:
+
+**macOS / Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
+```
+
+When the environment is active your prompt starts with `(.venv)`. Activate
+it again in every new terminal before running the app. If PowerShell refuses
+to run `Activate.ps1`, run `Set-ExecutionPolicy -Scope CurrentUser
+RemoteSigned` once and try again.
+
+In VS Code, open the Command Palette and run **Python: Select Interpreter**,
+then choose the one inside `.venv`. That lets the editor understand the
+project's code.
+
+---
+
+## 8. Step 5 — Connect a model
+
+The app reads its settings from the `.env` file you just created. Open it in
+VS Code and set it up for the option you chose.
+
+**Option A — Ollama.** Install Ollama from `ollama.com`, start it, then
+download the model:
+
+```bash
+ollama pull qwen3:4b
+```
+
+The defaults in `.env` already point at Ollama, so nothing else needs
+changing. To use a different model, pull it and set `OLLAMA_MODEL` to its
+name.
+
+**Option B — OpenAI.** Create an API key in your OpenAI account's API keys
+page, then edit these lines in `.env`:
+
+```text
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your-key-here
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_BASE_URL=
+```
+
+Leave `OPENAI_BASE_URL` blank unless you're using another OpenAI-compatible
+provider. Treat the key like a password: `.env` is excluded from Git so it
+won't be uploaded, and you should never paste the key into code, screenshots
+or chat messages.
+
+---
+
+## 9. Step 6 — Check the setup and start the app
+
+Check that the app can reach your model:
+
+```bash
+python -m app.core.check_setup
+```
+
+For Ollama it confirms the server is running and the model is downloaded.
+For OpenAI it confirms the settings are present; your first chat message
+proves the key works. Then start the app:
+
+```bash
+streamlit run app/ui.py
+```
+
+Your browser opens GlobalTech AI at `http://localhost:8501`. The sidebar
+should show the model as **Connected**. Pick a module from the **MODULE**
+switcher at the top of the sidebar. To stop the app, press Ctrl+C in the
+terminal. If you prefer the command line, `python -m app.main` runs the same
+assistant as a terminal chat.
+
+---
+
+## 10. Step 7 — Run the security tests
+
+```bash
+pytest -q
+```
+
+The tests check the app's security controls directly, without calling the
+model, so they give the same result every time. On a fresh copy, **7 tests
+fail and 60 pass** — and that is correct. The 7 failures are the planted
+vulnerabilities: 1 in Module 1, 2 in Module 2 and 4 in Module 3. Fixing them
+is your job in those labs. Module 4's tests all pass from the start because
+its lesson is a comparison, not a bug fix.
+
+---
+
+## 11. Troubleshooting
+
+- **The sidebar says "Model unavailable".** Make sure Ollama is running and
+  the model is pulled, or that the OpenAI lines in `.env` are correct, then
+  rerun `python -m app.core.check_setup`.
+- **"python is not recognized" (Windows).** Python wasn't added to PATH.
+  Rerun the installer, choose Modify, and enable it — or reinstall with the
+  PATH box ticked.
+- **pip install fails.** Check `python --version` with the environment
+  active; it must be 3.11 or newer. If not, delete the `.venv` folder and
+  recreate it with the newer Python.
+- **Port 8501 is already in use.** Another copy is still running. Stop it,
+  or start this one with `streamlit run app/ui.py --server.port 8502`.
+- **More than 7 tests fail.** A demo probably changed the ticket data. Reset
+  it with `git checkout data/mcp/tickets.json` and rerun.
+
+---
+
+## 12. Ready for Module 1
+
+You're set up when all of these are true:
+
+- `python --version` (with `.venv` active) shows 3.11 or newer.
+- `python -m app.core.check_setup` reports a pass for your model.
+- The app opens in your browser and the sidebar shows **Connected**.
+- `pytest -q` shows 7 failed and 60 passed.
+
+Keep the app running in one window and these notes in another, and move on
+to Module 1.
 
 \newpage
 
