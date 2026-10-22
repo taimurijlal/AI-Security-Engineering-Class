@@ -1359,10 +1359,12 @@ autonomy:
 2. **Tool output is still untrusted input — and now it can persist.**
    Module 3 taught you that a ticket description read on one turn can
    smuggle in an instruction. Module 4 adds a new twist: this agent has a
-   *memory* across turns and runs. A planted instruction that gets recorded
-   into memory without the right trust classification doesn't just
-   influence the turn it arrived on — it can bias every later planning
-   step for the rest of the run, or beyond.
+   *memory* that carries across the steps of a run. A planted instruction
+   that gets recorded into memory without the right trust classification
+   doesn't just influence the turn it arrived on — it can bias every later
+   planning step for the rest of the run. (This app keeps each run's memory
+   separate per user; agents that remember across sessions let a poisoned
+   entry travel even further.)
 3. **Autonomy introduces two genuinely new questions Modules 1–3 never had
    to ask.** First: when a proposed action is a write that's *allowed*,
    should it still require a human to say "go ahead" before it runs? MCP
