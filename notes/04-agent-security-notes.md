@@ -9,6 +9,10 @@ is worthless if nothing enforces it (Module 2), and why a tool-calling
 assistant's output is untrusted input and its identity must come from the
 application, never the model (Module 3).
 
+For the formal, phase-by-phase version, use
+[`labs/04-agent-security.md`](../labs/04-agent-security.md). These notes
+are the "learn it, then try it yourself" companion.
+
 **One thing is different about this module, on purpose.** Modules 1–3 each
 ship with exactly one planted bug for you to find and fix. Module 4 instead
 ships with a genuine, finished **Agent mode** switch — `Vulnerable` versus
@@ -566,6 +570,6 @@ remediation for the one rule that's actually mode-dependent
 correct in both modes the whole time. `instructor/module4-SOLUTION.md`
 has the full architecture writeup if you want to check your own findings
 against it — try reasoning through each demo's Agent Inspector trace
-yourself first. A formal `labs/04-agent-security.md` challenge document for
-this module hasn't been published yet; until it is, this section is the
-primary self-guided material for Module 4.
+yourself first. For the formal, phase-by-phase version with findings to
+record and a remediation to build, use
+[`labs/04-agent-security.md`](../labs/04-agent-security.md).
