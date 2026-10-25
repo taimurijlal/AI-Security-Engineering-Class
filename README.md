@@ -45,7 +45,7 @@ app/
     module4_agent/       a LangGraph agent with approval, memory and budget controls
 data/                    seed data: RAG documents, MCP employees/salaries/tickets
 labs/                    student lab handouts (Modules 1–3)
-notes/                   course notes: one Markdown file per module, plus all modules combined (Markdown and Word)
+notes/                   course notes, one Markdown file per module
 instructor/              solutions and the Module 4 demo guide (attempt the labs first)
 tests/                   deterministic security tests, one folder per module
 ```
@@ -200,9 +200,8 @@ git checkout data/mcp/tickets.json
 
 ## For instructors
 
-- [instructor/](instructor/) has a solution for each module and [module4-demo-guide.md](instructor/module4-demo-guide.md), a recording script with the expected result of every Module 4 demo.
-- [notes/](notes/) has the course notes: one Markdown file per module (`01-` to `04-…-notes.md`) and all modules combined in Markdown and Word. [04-agent-security-notes.md](notes/04-agent-security-notes.md) is the main self-guided material for Module 4, which has no lab handout yet.
-- [notes/04-agent-security-script.md](notes/04-agent-security-script.md) is a read-aloud teaching script for Module 4 using the real agent in Live Agent Mode: what to say, what to click, and when to show the code, building through all six agentic risks.
+- [instructor/](instructor/) has a solution for each module.
+- [notes/](notes/) has the course notes, one Markdown file per module (`01-` to `04-…-notes.md`). [04-agent-security-notes.md](notes/04-agent-security-notes.md) is the main self-guided material for Module 4, which has no lab handout yet.
 
 ## Architecture
 

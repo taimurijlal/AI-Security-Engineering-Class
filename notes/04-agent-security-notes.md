@@ -563,10 +563,9 @@ There is no single fix to apply here — flip the **Agent mode** radio from
 Vulnerable to Secured on Demos 2 and 5b and you've already seen the entire
 remediation for the one rule that's actually mode-dependent
 (`requires_approval()`); everything else in `security_boundary.py` was
-correct in both modes the whole time. `instructor/module4-SOLUTION.md` and
-`instructor/module4-demo-guide.md` have the full architecture writeup and
-exact expected results per demo if you want to check your own findings
-against them — try reasoning through each demo's Agent Inspector trace
+correct in both modes the whole time. `instructor/module4-SOLUTION.md`
+has the full architecture writeup if you want to check your own findings
+against it — try reasoning through each demo's Agent Inspector trace
 yourself first. A formal `labs/04-agent-security.md` challenge document for
 this module hasn't been published yet; until it is, this section is the
 primary self-guided material for Module 4.

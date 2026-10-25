@@ -33,7 +33,7 @@ The starter code is intentionally insecure; that is the lab. Expected failing te
 - Module 2: `module2_rag/rag.py` ranks/returns every chunk regardless of role; `is_authorized()` exists but isn't enforced. A corpus document (`internal/quarterly_business_update.txt`) contains an embedded prompt injection on purpose.
 - Module 3: each tool in `module3_mcp/mcp_server.py` calls `tool_policy.authorize()` but executes the backend read/write regardless of `decision.allowed`.
 
-Solutions live in `instructor/moduleN-SOLUTION.md` (plus `instructor/module4-demo-guide.md`); lab handouts in `labs/`.
+Solutions live in `instructor/moduleN-SOLUTION.md`; lab handouts in `labs/`; per-module course notes in `notes/`.
 
 ## Architecture
 

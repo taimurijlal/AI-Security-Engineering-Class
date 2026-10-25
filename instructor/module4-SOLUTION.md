@@ -319,7 +319,7 @@ roster and Security Testing Mode isolation confirmed across Module 1→2→3→4
 switches; all five Module 4 demonstrations were run live end-to-end in
 Controlled Security Scenario Mode, including the Demo 2 Approve path, the
 Demo 2 Deny path, and inspection of the Demo 4 Agent Memory Inspector
-output (see `module4-demo-guide.md` for exact observed results).
+output.
 
 ## 13. Known limitations
 
