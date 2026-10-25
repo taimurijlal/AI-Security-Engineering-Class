@@ -1,5 +1,7 @@
 # GlobalTech AI Security Engineering
 
+> 🎓 **This is the companion repository for the Udemy course [The AI Security Engineer Career Masterclass](https://www.udemy.com/course/the-ai-security-engineer-career-masterclass/?referralCode=DA52F79319AE292A3696).** Each module here is the hands-on lab for a section of the course.
+
 A **deliberately vulnerable** AI application for learning AI security engineering hands-on. It plays the part of *GlobalTech AI*, an internal employee assistant at a fictional company, and is built as four self-contained lab **modules** inside one Streamlit app. You switch between modules from the sidebar; there are no separate projects to run.
 
 Each module teaches one way AI applications get security wrong: you attack it in the browser, record what you find, read the code responsible, and (in Modules 1–3) fix it so the security tests pass.
